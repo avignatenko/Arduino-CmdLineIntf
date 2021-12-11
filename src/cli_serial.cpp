@@ -37,5 +37,7 @@ CommandLineIntf::CommandLineIntf( command_t* c, unsigned int l ) : line(), args(
     this->console     	= &Serial;
     this->commands    	= c;
     this->cmdCount  	= l;
+
+    displayUserPrompt();
     return;
 }

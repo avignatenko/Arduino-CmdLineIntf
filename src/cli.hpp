@@ -56,7 +56,9 @@ class CommandLineIntf
 public:
     CommandLineIntf( Stream* s, command_t* c, unsigned int l );
     CommandLineIntf( command_t* c, unsigned int l );
+    void displayUserPrompt();
     int run( void );
+    int runOnce( void );
     int help( ArgumentsInterface* args, const char* cmd, const char* helpString );
 protected:
     int parseLine( void );

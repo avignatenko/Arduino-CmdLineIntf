@@ -30,28 +30,46 @@
 #define __version__		"1.1.0"
 
 /*
-*	Command line interface class generic functions
-*
-*/
-int CommandLineIntf::run( void )
+ *	Command line interface class generic functions
+ *
+ */
+void CommandLineIntf::displayUserPrompt()
+{
+    // Display the prompt for the user
+    this->console->print("> ");
+}
+
+int CommandLineIntf::runOnce(void)
 {
     int ret = CMD_OK;
-    // Display the prompt for the user
-    this->console->print( "> " );
+
     // Wait for the user to enter a command
-    if ( this->readLine() )
+    if (this->readLine())
     {
         // Process the command line entered by the user
-        ret = this->parseLine(); 
-        if ( ret > CMD_OK )
+        ret = this->parseLine();
+        if (ret > CMD_OK)
         {
             ret = executeCommand();
         }
+        // Clear the command line data
+        this->line = "";
+        this->args.clear();
+
+        this->displayUserPrompt();
+
+        return ( ret );
     }
-    // Clear the command line data
-    this->line = "";
-    this->args.clear();
-    return ( ret );
+
+    return -1; // no full command yet
+}
+
+int CommandLineIntf::run(void)
+{
+    int ret = -1;
+    while (ret < 0)
+        ret = runOnce();
+    return ret;
 }
 
 int CommandLineIntf::help( ArgumentsIntf* args, const char * cmd, const char * helpString )
@@ -103,16 +121,19 @@ int CommandLineIntf::parseLine( void )
 
 char* CommandLineIntf::readLine( void )
 {
-    while( !this->console->available() );
     if ( this->console->available() )
     {
-        // Read the actual string from the user until the newline character.
-        this->line = this->console->readStringUntil( '\n' );
-        // Remove any trailing space, carrage return or tab characters
-        this->line.trim(); 
-        this->console->println( this->line );
-        // Return a pointer to the string
-        return ( this->line.c_str() );
+        char read = this->console->read();
+        if (read == '\n')
+        {
+            // Remove any trailing space, carrage return or tab characters
+            this->line.trim(); 
+            this->console->println( this->line );
+            // Return a pointer to the string
+            return ( this->line.c_str() );
+        }
+
+        this->line += read;
     }
     return ( NULL );
 }

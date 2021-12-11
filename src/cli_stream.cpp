@@ -42,5 +42,7 @@ CommandLineIntf::CommandLineIntf( Stream* s, command_t* c, unsigned int l ) : li
     this->console     	= s;
     this->commands    	= c;
     this->cmdCount  	= l;
+
+    displayUserPrompt();
     return;
 }
